@@ -10,46 +10,38 @@ epivizToGviz <- function(app, gen, chr, start, end) {
   id <- app$chart_mgr$list_charts()$id
   meas <- strsplit(app$chart_mgr$list_charts()$measurements, ",")
   type <- app$chart_mgr$list_charts()$type
-
-  # create data objects
-  for (y in 1:length(id)) {
-    for (i in 1:length(meas[[y]])) {
-      gr <- GRanges(app$get_ms_object(app$chart_mgr$list_charts()[[y,1]], index=i)$.object)
-      assign(paste0("id_", y, "_", i, "_", chr), gr[which(seqnames(gr)==chr),])
-   }
-  }
+  track_names <- list()
+  track_list <- list()
 
   # convert to Gviz objects
   for (y in 1:length(id)) {
     for (i in 1:length(meas[[y]])) {
+      gr <- GRanges(app$get_ms_object(app$chart_mgr$list_charts()[[y,1]], index=i)$.object)
+      assign(paste0("id_", y, "_", i, "_", chr), gr[which(seqnames(gr)==chr),])
+    }
+    for (i in 1:length(meas[[y]])) {
       if (type[y]=="epiviz.plugins.charts.GenesTrack") {
         assign(paste0("gene_track_", y, "_", i), GeneRegionTrack(get(paste0("id_", y, "_", i, "_", chr)),
           collapseTranscripts=TRUE, shape="arrow", chromosome=chr, genome=gen, name=meas[[y]][i]))
+        track_names[[length(track_names)+1]] <- paste0("gene_track_", y, "_", i)
+        track_list[[length(track_list)+1]] <- get(paste0("gene_track_", y, "_", i))
       } else if (type[y]=="epiviz.plugins.charts.BlocksTrack") {
           assign(paste0("anno_track_", y, "_", i), AnnotationTrack(get(paste0("id_", y, "_", i, "_", chr)),
             stacking="dense", shape="box", col=NULL, chromosome=chr, genome=gen, name=meas[[y]][i]))
+          track_names[[length(track_names)+1]] <- paste0("anno_track_", y, "_", i)
+          track_list[[length(track_list)+1]] <- get(paste0("anno_track_", y, "_", i))
       } else if (type[y]=="epiviz.plugins.charts.LineTrack") {
-          assign(paste0("data_track_", y, "_", i), DataTrack(get(paste0("id_", y, "_", i, "_", chr)),
+          assign(paste0("data_col_", i), GRanges(seqnames=seqnames(get(paste0("id_", y, "_", i, "_", chr))),ranges=ranges(get(paste0("id_", y, "_", i, "_", chr))),betas=mcols(get(paste0("id_", y, "_", i, "_", chr)))[i]))
+          assign(paste0("data_track_", y, "_", i), DataTrack(get(paste0("data_col_", i)),
             type=c("p", "smooth"), chromosome=chr, genome=gen, name=meas[[y]][i]))
+          track_names[[length(track_names)+1]] <- paste0("data_track_", y, "_", i)
+          track_list[[length(track_list)+1]] <- get(paste0("data_track_", y, "_", i))
       }
      }
    }
   chr_track <- IdeogramTrack(genome=gen,chromosome=chr)
   axis_track <- GenomeAxisTrack()
 
-
   # plot outcome
-  tracks_list <- list()
-  for (y in 1:length(id)) {
-    for (i in 1:length(meas[[y]])) {
-      if (type[y]=="epiviz.plugins.charts.GenesTrack") {
-        tracks_list[[length(tracks_list)+1]] <- get(paste0("gene_track_", y, "_", i))
-      } else if (type[y]=="epiviz.plugins.charts.BlocksTrack") {
-        tracks_list[[length(tracks_list)+1]] <- get(paste0("anno_track_", y, "_", i))
-      } else if (type[y]=="epiviz.plugins.charts.LineTrack") {
-        tracks_list[[length(tracks_list)+1]] <- get(paste0("data_track_", y, "_", i))
-      }
-    }
-  }
-  plotTracks(tracks_list, from=start, to=end, sizes=matrix(1,1,length(tracks_list)))
+  plotTracks(track_list, from=start, to=end, sizes=matrix(1,1,length(track_list)))
 }
