@@ -1,6 +1,6 @@
 # Convert an existing epiviz workspace into a Gviz plot
 
-epivizToGviz <- function(app, gen, chr, start, end) {
+epivizToGviz <- function(app) {
 
   # set up used parameters
   loc <- capture.output(app$get_current_location(show))
