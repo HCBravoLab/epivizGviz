@@ -7,4 +7,4 @@ Authors@R: person("Morgan", "Walter", email = "mlwalter@terpmail.umd.edu", role 
 Description: The goal of this R package is to take epiviz workspaces and make them into Gviz plots and vice versa.
 License: What license is it under?
 LazyData: TRUE
-Depends: epivizrStandalone, Gviz
+Depends: epivizrStandalone, Gviz, gtools
