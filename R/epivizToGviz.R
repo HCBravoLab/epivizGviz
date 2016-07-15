@@ -13,11 +13,8 @@ epivizToGviz <- function(app) {
   start <- loc$start
   end <- loc$end
 
-  if (exists("track_list")) {
-    rm(track_list, envir=globalenv())
-  }
-
   # get ids, names, and measurements
+  if (exists("track_list")) {rm(track_list, envir=globalenv())}
   chart_ids <- ls(envir=app$chart_mgr$.chart_list)
   for (id in chart_ids) {
     chart_obj <- app$chart_mgr$.get_chart_object(id)
@@ -27,36 +24,36 @@ epivizToGviz <- function(app) {
       gr <- GRanges(app$data_mgr$.find_datasource(ms@datasourceId)$.object)
       gr_chr <- gr[which(seqnames(gr)==chr),]
       if (ms@defaultChartType=="GenesTrack") {
-        genesToGeneRegion(grange=gr_chr, name=ms@name)
+        genesToGeneRegion(grange=gr_chr, name=ms@datasourceId)
       } else if (ms@defaultChartType=="BlocksTrack") {
-        blocksToAnnotation(grange=gr_chr, name=ms@name)
+        blocksToAnnotation(grange=gr_chr, name=ms@datasourceId)
       } else if (ms@defaultChartType=="LineTrack") {
-        lineToData(grange=gr_chr, name=strsplit(ms@datasourceId,"_")[[1]][1])
+        lineToData(grange=gr_chr, name=ms@datasourceId)
       } else if (ms@defaultChartType=="StackedLineTrack") {
-        stackedLineToData(grange=gr_chr, name=strsplit(ms@datasourceId,"_")[[1]][1])
+        stackedLineToData(grange=gr_chr, name=ms@datasorceId)
       }
     }
   }
+  track_list <- unique(track_list)
 
   # adjust plot sizes
-  track_list <- unique(track_list)
-  size <- matrix(nrow=length(track_list), ncol=1)
-  for (i in 1:length(unique(track_list))) {
-    if (class(track_list[[i]])=="IdeogramTrack") {
-      size[i,1] <- 1
-    } else if (class(track_list[[i]])=="GenomeAxisTrack") {
-      size[i,1] <- 2
-    } else if (class(track_list[[i]])=="GeneRegionTrack") {
-      size[i,1] <- 4
-    } else if (class(track_list[[i]])=="AnnotationTrack") {
-      size[i,1] <- 2
-    } else if (class(track_list[[i]])=="DataTrack") {
-      size[i,1] <- 6
-      }
+  if (exists("size")) {rm(size, envir=globalenv())}
+  size <- list()
+  for (track in track_list) {
+    if (class(track)=="IdeogramTrack") {
+      size[[length(size)+1]] <- 1
+    } else if (class(track)=="GenomeAxisTrack") {
+      size[[length(size)+1]] <- 2
+    } else if (class(track)=="GeneRegionTrack") {
+      size[[length(size)+1]] <- 4
+    } else if (class(track)=="AnnotationTrack") {
+      size[[length(size)+1]] <- 2
+    } else if (class(track)=="DataTrack") {
+      size[[length(size)+1]] <- 6
     }
+  }
 
-  # plot outcome
-  plotTracks(unique(track_list), from=start, to=end, sizes=size)
-  rm(track_list)
+  # plot list of converted tracks
+  plotTracks(track_list, from=start, to=end, sizes=size)
 }
 
