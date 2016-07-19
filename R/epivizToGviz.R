@@ -19,18 +19,27 @@ epivizToGviz <- function(app) {
   for (id in chart_ids) {
     chart_obj <- app$chart_mgr$.get_chart_object(id)
     measurements <- chart_obj$.measurements
-    for (ms in measurements) {
+    type <- chart_obj$.type
+    for (ms in measurements ) {
       # create gviz objects
       gr <- GRanges(app$data_mgr$.find_datasource(ms@datasourceId)$.object)
       gr_chr <- gr[which(seqnames(gr)==chr),]
-      if (ms@defaultChartType=="GenesTrack") {
-        genesToGeneRegion(grange=gr_chr, name=ms@datasourceId)
-      } else if (ms@defaultChartType=="BlocksTrack") {
-        blocksToAnnotation(grange=gr_chr, name=ms@datasourceId)
-      } else if (ms@defaultChartType=="LineTrack") {
-        lineToData(grange=gr_chr, name=ms@datasourceId)
-      } else if (ms@defaultChartType=="StackedLineTrack") {
-        stackedLineToData(grange=gr_chr, name=ms@datasorceId)
+      if (type=="epiviz.plugins.charts.GenesTrack") {
+        convertGenesTrack(grange=gr_chr, name=ms@datasourceId)
+      } else if (type=="epiviz.plugins.charts.BlocksTrack") {
+        convertBlocksTrack(grange=gr_chr, name=ms@datasourceId)
+      } else if (type=="epiviz.plugins.charts.LineTrack") {
+        convertLineTrack(grange=gr_chr, name=ms@datasourceId)
+      } else if (type=="epiviz.plugins.charts.StackedLineTrack") {
+        convertStackedLineTrack(grange=gr_chr, name=ms@datasorceId)
+      } else if (type=="epiviz.plugins.charts.HeatmapPlot") {
+        convertHeatmapPlot(grange=gr_chr, name=ms@datasourceId)
+      } else if (type=="epiviz.plugins.charts.ScatterPlot") {
+
+      } else if (type=="epiviz.plugins.charts.LinePlot") {
+
+      } else if (type=="epiviz.plugins.charts.StackedLinePlot") {
+
       }
     }
   }
@@ -56,4 +65,9 @@ epivizToGviz <- function(app) {
   # plot list of converted tracks
   plotTracks(track_list, from=start, to=end, sizes=size)
 }
+
+
+
+
+
 
