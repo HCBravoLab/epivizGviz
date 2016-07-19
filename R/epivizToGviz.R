@@ -33,7 +33,7 @@ epivizToGviz <- function(app) {
       } else if (type=="epiviz.plugins.charts.StackedLineTrack") {
         convertStackedLineTrack(grange=gr_chr, name=ms@datasorceId)
       } else if (type=="epiviz.plugins.charts.HeatmapPlot") {
-        convertHeatmapPlot(grange=gr_chr, name=ms@datasourceId)
+
       } else if (type=="epiviz.plugins.charts.ScatterPlot") {
 
       } else if (type=="epiviz.plugins.charts.LinePlot") {
