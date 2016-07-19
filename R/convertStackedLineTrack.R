@@ -10,5 +10,5 @@ convertStackedLineTrack <- function(grange, chr, chart=NULL, name) {
     }
   }
   if (!exists("track_list")) {track_list <<- list()}
-  track_list[[length(track_list)+1]] <<- DataTrack(grange, groups=colnames(mcols(grange)), type=c("horizon"), chromosome=chr, name=name)
+  track_list[[length(track_list)+1]] <<- DataTrack(grange, groups=colnames(mcols(grange)), type=c("mountain"), chromosome=chr, name=name)
 }

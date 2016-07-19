@@ -9,6 +9,7 @@ convertGenesTrack <- function(grange, chr, chart=NULL, name) {
       name <- ms@datasourceId
     }
   }
+  grange
   gene_track <- GeneRegionTrack(grange, collapseTranscripts=TRUE, stacking="dense", transcriptAnnotation="symbol", shape="arrow", chromosome=chr, name=name)
   gen <- gene_track@genome
   chr <- gene_track@chromosome
