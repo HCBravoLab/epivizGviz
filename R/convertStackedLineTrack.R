@@ -7,6 +7,6 @@ convertStackedLineTrack <- function(app, chart_obj, chr) {
     gr_chr <- gr[which(seqnames(gr)==chr),]
     name <- ms@datasourceId
     if (!exists("track_list")) {track_list <<- list()}
-    track_list[[length(track_list)+1]] <<- DataTrack(gr_chr, groups=colnames(mcols(gr_chr)), type=c("mountain"), chromosome=chr, name=name)
+    track_list[[length(track_list)+1]] <<- DataTrack(gr_chr, groups=colnames(mcols(gr_chr)), type=c("histogram"), chromosome=chr, name=name)
   }
 }

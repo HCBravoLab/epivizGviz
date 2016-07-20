@@ -31,7 +31,7 @@ epivizToGviz <- function(app) {
     } else if (type=="epiviz.plugins.charts.HeatmapPlot") {
       convertHeatmapPlot(app=app, chart_obj=chart_obj, chr=chr)
     } else if (type=="epiviz.plugins.charts.ScatterPlot") {
-
+      convertScatterPlot(app=app, chart_obj=chart_obj, chr=chr)
     } else if (type=="epiviz.plugins.charts.LinePlot") {
 
     } else if (type=="epiviz.plugins.charts.StackedLinePlot") {
@@ -49,7 +49,7 @@ epivizToGviz <- function(app) {
     } else if (class(track)=="GenomeAxisTrack") {
       size[[length(size)+1]] <- 2
     } else if (class(track)=="GeneRegionTrack") {
-      size[[length(size)+1]] <- 4
+      size[[length(size)+1]] <- 1
     } else if (class(track)=="AnnotationTrack") {
       size[[length(size)+1]] <- 2
     } else if (class(track)=="DataTrack") {
