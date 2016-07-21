@@ -1,0 +1,15 @@
+# converts Epiviz ScatterPlot to Gviz DataTrack
+
+convertScatter <- function(app, chart_obj, chr) {
+  measurements <- chart_obj$.measurements
+  ms_obj <- app$get_ms_object(chart_obj)$.object
+  mcols(rowRanges(ms_obj)) <- assay(ms_obj)
+  gr <- GRanges(rowRanges(ms_obj), strand="*")
+  gr_chr <- gr[which(seqnames(gr)==chr),]
+  for (ms in measurements) {
+    name <- ms@datasourceId
+    if (!exists("scat_list")) {scat_list <- list()}
+    scat_list[[length(scat_list)+1]] <- DataTrack(gr_chr, groups=colnames(mcols(gr_chr)), type=c("p"), chromosome=chr, name=name, fontsize=12)
+  }
+  scat_list <- unique(scat_list)
+}

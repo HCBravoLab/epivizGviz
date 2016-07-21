@@ -15,30 +15,27 @@ epivizToGviz <- function(app) {
 
   # get chart ids and chart objects
   if (exists("track_list")) {rm(track_list, envir=globalenv())}
+  track_list <- list()
   chart_ids <- ls(envir=app$chart_mgr$.chart_list)
   for (id in chart_ids) {
     chart_obj <- app$chart_mgr$.get_chart_object(id)
     type <- chart_obj$.type
     # create gviz objects
     if (type=="epiviz.plugins.charts.GenesTrack") {
-      convertGenesTrack(app=app, chart_obj=chart_obj, chr=chr)
+      track_list[[length(track_list)+1]] <- convertGenes(app=app, chart_obj=chart_obj, chr=chr)
     } else if (type=="epiviz.plugins.charts.BlocksTrack") {
-      convertBlocksTrack(app=app, chart_obj=chart_obj, chr=chr)
-    } else if (type=="epiviz.plugins.charts.LineTrack") {
-      convertLineTrack(app=app, chart_obj=chart_obj, chr=chr)
-    } else if (type=="epiviz.plugins.charts.StackedLineTrack") {
-      convertStackedLineTrack(app=app, chart_obj=chart_obj, chr=chr)
+      track_list[[length(track_list)+1]] <- convertBlocks(app=app, chart_obj=chart_obj, chr=chr)
+    } else if (type=="epiviz.plugins.charts.LineTrack" || type=="epiviz.plugins.charts.LinePlot") {
+      track_list[[length(track_list)+1]] <- convertLine(app=app, chart_obj=chart_obj, chr=chr)
+    } else if (type=="epiviz.plugins.charts.StackedLineTrack" || type=="epiviz.plugins.charts.StackedLinePlot") {
+      track_list[[length(track_list)+1]] <- convertStackedLine(app=app, chart_obj=chart_obj, chr=chr)
     } else if (type=="epiviz.plugins.charts.HeatmapPlot") {
-      convertHeatmapPlot(app=app, chart_obj=chart_obj, chr=chr)
+      track_list[[length(track_list)+1]] <- convertHeatmap(app=app, chart_obj=chart_obj, chr=chr)
     } else if (type=="epiviz.plugins.charts.ScatterPlot") {
-      convertScatterPlot(app=app, chart_obj=chart_obj, chr=chr)
-    } else if (type=="epiviz.plugins.charts.LinePlot") {
-
-    } else if (type=="epiviz.plugins.charts.StackedLinePlot") {
-
+      track_list[[length(track_list)+1]] <- convertScatter(app=app, chart_obj=chart_obj, chr=chr)
     }
   }
-  track_list <- unique(track_list)
+  track_list <- unique(unlist(track_list))
 
   # adjust plot sizes
   if (exists("size")) {rm(size, envir=globalenv())}
@@ -59,7 +56,6 @@ epivizToGviz <- function(app) {
 
   # plot list of converted tracks
   plotTracks(track_list, from=start, to=end, sizes=size)
-  rm(track_list, envir=globalenv())
 }
 
 
