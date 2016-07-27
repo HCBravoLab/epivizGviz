@@ -1,6 +1,6 @@
-# convert an existing epiviz workspace into a Gviz plot
+# convert an existing Epiviz workspace into a Gviz plot
 
-epivizToGviz <- function(app) {
+epivizToGviz <- function(app, plot_tracks=TRUE) {
 
   # callback for location
   loc <- NULL
@@ -14,7 +14,6 @@ epivizToGviz <- function(app) {
   end <- loc$end
 
   # get chart ids and chart objects
-  if (exists("track_list")) {rm(track_list, envir=globalenv())}
   track_list <- list()
   chart_ids <- ls(envir=app$chart_mgr$.chart_list)
   for (id in chart_ids) {
@@ -38,7 +37,6 @@ epivizToGviz <- function(app) {
   track_list <- unique(unlist(track_list))
 
   # adjust plot sizes
-  if (exists("size")) {rm(size, envir=globalenv())}
   size <- list()
   for (track in track_list) {
     if (class(track)=="IdeogramTrack") {
@@ -55,11 +53,9 @@ epivizToGviz <- function(app) {
   }
 
   # plot list of converted tracks
+  if (plot_tracks==TRUE) {
   plotTracks(track_list, from=start, to=end, sizes=size)
+  }
+
+  return(track_list)
 }
-
-
-
-
-
-

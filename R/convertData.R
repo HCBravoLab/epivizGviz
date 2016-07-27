@@ -3,13 +3,18 @@
 convertData <- function(app, track) {
   gr <- track@range
   data <- track@data
-  mcols(gr) <- t(data)
   name <- track@name
-  if (displayPars(track)$type=="smooth") {
-    data_track <- app$plot(gr, datasource_name=name, type="bp", columns=colnames(mcols(gr)))
+  exprs <- t(as.matrix(data))
+  rse <- SummarizedExperiment(assays=exprs, rowRanges=gr)
+  rse_ms <- app$data_mgr$add_measurements(rse, name)
+  if (displayPars(track)$type=="heatmap" || displayPars(track)$type=="gradient") {
+    data_track <- app$chart_mgr$visualize("HeatmapPlot", datasource=rse_ms)
+  } else if (displayPars(track)$type=="p") {
+    data_track <- app$chart_mgr$visualize("ScatterPlot", datasource=rse_ms)
+  } else if (displayPars(track)$type=="histogram") {
+    data_track <- app$chart_mgr$visualize("StackedLineTrack", datasource=rse_ms)
+  } else {
+    data_track <- app$chart_mgr$visualize("LineTrack", datasource=rse_ms)
     data_track$set(settings=list(step=1, interpolation="basis"))
-  } else if (displayPars(track)$type=="heatmap") {
-    gr_ms <- app$data_mgr$add_measurements(gr, name)
-    data_track <- app$chart_mgr$visualize("HeatmapPlot", datasource_name=gr_ms)
   }
 }
