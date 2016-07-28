@@ -1,6 +1,19 @@
 # converts Epiviz BlocksTrack to Gviz AnnotationTrack
 
-convertBlocks <- function(app, chart_obj, chr) {
+convertEpivizBlocks <- function(app, chart_obj, chr) {
+
+  # check arguments
+  if (!is(app, "EpivizApp")) {
+    stop("'app' must be an 'EpivizApp' object")
+  }
+  if (!identical(chart_obj$.type, "epiviz.plugins.charts.BlocksTrack")) {
+    stop("'chart_obj' must be an 'EpivizChart' object of type 'BlocksTrack'")
+  }
+  if (is.null(chr)) {
+    stop("Must provide 'chr'")
+  }
+
+  # create gviz track
   measurements <- chart_obj$.measurements
   for (ms in measurements) {
     gr <- GRanges(app$data_mgr$.find_datasource(ms@datasourceId)$.object)

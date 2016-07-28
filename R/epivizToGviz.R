@@ -2,13 +2,20 @@
 
 epivizToGviz <- function(app, plot_tracks=TRUE) {
 
+  # check arguments
+  if (!is(app, "EpivizApp")) {
+    stop("'app' must be an 'EpivizApp' object")
+  }
+
   # callback for location
+  if (app$is_server_closed) {
+    stop("The server for 'app' is closed")
+  }
   loc <- NULL
   app$get_current_location(function(response) {
     if (response$success) {
       loc <<- response$value
     }})
-
   chr <- loc$seqName
   start <- loc$start
   end <- loc$end
@@ -21,17 +28,17 @@ epivizToGviz <- function(app, plot_tracks=TRUE) {
     type <- chart_obj$.type
     # create gviz objects
     if (type=="epiviz.plugins.charts.GenesTrack") {
-      track_list[[length(track_list)+1]] <- convertGenes(app=app, chart_obj=chart_obj, chr=chr)
+      track_list[[length(track_list)+1]] <- convertEpivizGenes(app=app, chart_obj=chart_obj, chr=chr)
     } else if (type=="epiviz.plugins.charts.BlocksTrack") {
-      track_list[[length(track_list)+1]] <- convertBlocks(app=app, chart_obj=chart_obj, chr=chr)
+      track_list[[length(track_list)+1]] <- convertEpivizBlocks(app=app, chart_obj=chart_obj, chr=chr)
     } else if (type=="epiviz.plugins.charts.LineTrack" || type=="epiviz.plugins.charts.LinePlot") {
-      track_list[[length(track_list)+1]] <- convertLine(app=app, chart_obj=chart_obj, chr=chr)
+      track_list[[length(track_list)+1]] <- convertEpivizLine(app=app, chart_obj=chart_obj, chr=chr)
     } else if (type=="epiviz.plugins.charts.StackedLineTrack" || type=="epiviz.plugins.charts.StackedLinePlot") {
-      track_list[[length(track_list)+1]] <- convertStackedLine(app=app, chart_obj=chart_obj, chr=chr)
+      track_list[[length(track_list)+1]] <- convertEpivizStackedLine(app=app, chart_obj=chart_obj, chr=chr)
     } else if (type=="epiviz.plugins.charts.HeatmapPlot") {
-      track_list[[length(track_list)+1]] <- convertHeatmap(app=app, chart_obj=chart_obj, chr=chr)
+      track_list[[length(track_list)+1]] <- convertEpivizHeatmap(app=app, chart_obj=chart_obj, chr=chr)
     } else if (type=="epiviz.plugins.charts.ScatterPlot") {
-      track_list[[length(track_list)+1]] <- convertScatter(app=app, chart_obj=chart_obj, chr=chr)
+      track_list[[length(track_list)+1]] <- convertEpivizScatter(app=app, chart_obj=chart_obj, chr=chr)
     }
   }
   track_list <- unique(unlist(track_list))

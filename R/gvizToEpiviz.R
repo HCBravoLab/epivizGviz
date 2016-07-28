@@ -1,13 +1,20 @@
 # convert an existing Gviz plot into an Epiviz workspace
 
 gvizToEpiviz <- function(gviz_plot) {
+
+  # check arguments
+  if (!is(gviz_plot, "list")) {
+    stop(("'gviz_plot' must be a 'list' object"))
+  }
+
+  # create epiviz workspace
   for (track in gviz_plot) {
     if (class(track)=="GeneRegionTrack" || class(track)=="BiomartGeneRegionTrack") {
-      app <- convertGeneRegion(track=track, chr=chr, start=start, end=end)
+      app <- convertGvizGeneRegion(track=track)
     } else if (class(track)=="AnnotationTrack") {
-      convertAnnotation(app=app, track=track)
+      convertGvizAnnotation(app=app, track=track)
     } else if (class(track)=="DataTrack") {
-      convertData(app=app, track=track)
+      convertGvizData(app=app, track=track)
     }
   }
   return(app)

@@ -1,6 +1,19 @@
 # converts Epiviz HeatmapPlot to Gviz DataTrack
 
-convertHeatmap <- function(app, chart_obj, chr) {
+convertEpivizHeatmap <- function(app, chart_obj, chr) {
+
+  # check arguments
+  if (!is(app, "EpivizApp")) {
+    stop("'app' must be an 'EpivizApp' object")
+  }
+  if (!identical(chart_obj$.type, "epiviz.plugins.charts.HeatmapPlot")) {
+    stop("'chart_obj' must be an 'EpivizChart' object of type 'HeatmapPlot'")
+  }
+  if (is.null(chr)) {
+    stop("Must provide 'chr'")
+  }
+
+  # create gviz track
   measurements <- chart_obj$.measurements
   ms_obj <- app$get_ms_object(chart_obj)$.object
   mcols(rowRanges(ms_obj)) <- assay(ms_obj)

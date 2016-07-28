@@ -1,6 +1,19 @@
 # converts Epiviz StackedLineTrack to Gviz DataTrack
 
-convertStackedLine <- function(app, chart_obj, chr) {
+convertEpivizStackedLine <- function(app, chart_obj, chr) {
+
+  # check arguments
+  if (!is(app, "EpivizApp")) {
+    stop("'app' must be an 'EpivizApp' object")
+  }
+  if (!identical(chart_obj$.type, "epiviz.plugins.charts.StackedLineTrack") && !identical(chart_obj$.type, "epiviz.plugins.charts.StackedLinePlot")) {
+    stop("'chart_obj' must be an 'EpivizChart' object of type 'StackedLineTrack' or 'StackedLinePlot'")
+  }
+  if (is.null(chr)) {
+    stop("Must provide 'chr'")
+  }
+
+  # create gviz track
   measurements <- chart_obj$.measurements
   ms_obj <- app$get_ms_object(chart_obj)$.object
   mcols(rowRanges(ms_obj)) <- assay(ms_obj)

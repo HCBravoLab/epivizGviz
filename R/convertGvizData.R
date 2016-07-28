@@ -1,6 +1,16 @@
 # converts Gviz DataTrack to Epiviz LineTrack
 
-convertData <- function(app, track) {
+convertGvizData <- function(app, track) {
+
+  # check arguments
+  if (!is(app, "EpivizApp")) {
+    stop("'app' must be an 'EpivizApp' object")
+  }
+  if (!is(track, "DataTrack")) {
+    stop("'track' must be a 'DataTrack' object")
+  }
+
+  # create epiviz chart
   gr <- track@range
   data <- track@data
   name <- track@name

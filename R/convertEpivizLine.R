@@ -1,6 +1,19 @@
 # converts Epiviz LineTrack to Gviz DataTrack
 
-convertLine <- function(app, chart_obj, chr) {
+convertEpivizLine <- function(app, chart_obj, chr) {
+
+  # check arguments
+  if (!is(app, "EpivizApp")) {
+    stop("'app' must be an 'EpivizApp' object")
+  }
+  if (!identical(chart_obj$.type, "epiviz.plugins.charts.LineTrack") && !identical(chart_obj$.type, "epiviz.plugins.charts.LinePlot")) {
+    stop("'chart_obj' must be an 'EpivizChart' object of type 'LineTrack' or 'LinePlot'")
+  }
+  if (is.null(chr)) {
+    stop("Must provide 'chr'")
+  }
+
+  # create gviz track
   measurements <- chart_obj$.measurements
   for (ms in measurements) {
     gr <- GRanges(app$data_mgr$.find_datasource(ms@datasourceId)$.object)
