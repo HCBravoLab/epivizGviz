@@ -1,9 +1,6 @@
 # convert an existing Gviz plot into an Epiviz workspace
 
-gvizToEpiviz <- function(gviz_plot, annotation, start, end) {
-  chr <- "chr11"
-  start <- 85000000
-  end <- 86000000
+gvizToEpiviz <- function(gviz_plot) {
   for (track in gviz_plot) {
     if (class(track)=="GeneRegionTrack" || class(track)=="BiomartGeneRegionTrack") {
       app <- convertGeneRegion(track=track, chr=chr, start=start, end=end)
