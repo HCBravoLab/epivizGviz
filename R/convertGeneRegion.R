@@ -1,6 +1,6 @@
 # converts Gviz GeneRegionTrack to Epiviz GenesTrack
 
-convertGeneRegion <- function(track, annotation, chr, start, end) {
+convertGeneRegion <- function(track, annotation) {
   chr <- track@chromosome
   start <- min(start(track))
   end <- max(end(track))
