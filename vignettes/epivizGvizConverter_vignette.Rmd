@@ -19,17 +19,23 @@ The `epivizGvizConverter` package in R relies on the `epivizrStandalone` and `Gv
 
 Gather necessary R and Bioconductor packages and data to create Epiviz workspace.
 
-```{r, eval=F}
+```{r, eval=T, message=F, warning=F}
 # gather packages
 library(devtools)
 install_github("mlwalter4/epivizGvizConverter")
+library(epivizGvizConverter)
+```
 
+```{r, eval=F}
+# download other packages used in this vignette
 source("https://bioconductor.org/biocLite.R")
 biocLite(c("Homo.sapiens", "GenomicFeatures", "TxDb.Hsapiens.UCSC.hg19.knownGene"))
 library(Homo.sapiens)
 library(GenomicFeatures)
 library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+```
 
+```{r, eval=T, message=F}
 # load datasets
 data(promoter_regions)
 data(hyper_gr)
@@ -88,7 +94,13 @@ The main function in this package is`epivizToGviz` that converts an existing Epi
 
 After the EpivizApp object is created, the following line will turn it into a Gviz plot automatically. As mentioned previously, the app argument must be an object of type "EpivizApp" from the `epivizr` Bioconductor package. The function gathers information about the Epiviz workspace, including the current chromosome, start, and end location of the viewing pane in Epiviz. It also preserves the same vertical order in which the Epiviz workspace was made.
 
-The function will return the list of tracks that were successfully turned into Gviz plots. It will also automatically plot the new tracks once they are converted, unless the "plot_tracks" option is changed to FALSE.
+The function will return the list of tracks that were successfully turned into Gviz plots. It will also automatically plot the new tracks once they are converted, unless the "plot_tracks" option is changed to FALSE. The Epiviz app must be connected and available for `epivizToGviz`to work properly.
+
+```{r, eval=T}
+app
+```
+
+Convert to Gviz plot.
 
 ```{r, eval=F}
 gviz_plot <- epivizToGviz(app)
@@ -172,6 +184,12 @@ app$stop_app()
 
 This package also contains the `gvizToEpiviz` function which takes in a Gviz plot object that is list of Gviz track class objects (e.g. GeneRegionTrack, AnnotationTrack, DataTrack). The following will open a connection to a new Epiviz session and workspace on the same plotting range as the provided Gviz plot. Because `gvizToEpiviz` runs on `epivizrStandalone`, you must provide the "annotation" argument with an OrganismDB object if the genome of the GeneRegionTrack is not set to "hg19" for the human genome or if there is no GeneRegionTrack in the Gviz plot itself. You can also specify the chromosome and start and end location manually if you want to view a different range than the original plot.
 
+```{r, eval=T}
+gviz_plot
+```
+
+Convert to Epiviz workspace.
+
 ```{r, eval=F}
 app <- gvizToEpiviz(gviz_plot)
 ```
@@ -180,10 +198,13 @@ The workspace should end up looking like the one we began with in this vignette.
 
 ![](images/converted_epiviz_pic.PNG)
 
-Once the Epiviz workspace is created, you can add other visualizations as you wish. The settings of the charts may also be altered. Here, we remove the LineTrack and replace it with a StackedLineTrack as an example, as well as change the color of the DMR tracks.
+Once the Epiviz workspace is created, you can add other visualizations as you wish. The settings of the charts may also be altered. Here, we remove the LineTrack and replace it with a StackedLineTrack as an example, as well as change the color of the CpG island track.
+
+```{r, eval=T}
+ls(envir=app$chart_mgr$.chart_list)
+```
 
 ```{r, eval=F}
-ls(envir=app$chart_mgr$.chart_list)
 app$chart_mgr$set_chart_settings("epivizChart_2", colors="#145a32")
 app$chart_mgr$rm_chart("epivizChart_6")
 displayPars(gviz_plot[[8]]) <- list(type="histogram")
