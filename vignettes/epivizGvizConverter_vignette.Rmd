@@ -1,23 +1,31 @@
 ---
-title: "epivizGvizConverter User Guide"
+title: "The `epivizGvizConverter` User Guide"
 author: "Morgan Walter"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{epivizGvizConverter User Guide}
+  %\VignetteIndexEntry{The `epivizGvizConverter` User Guide}
   %\VignetteEncoding{UTF-8}
 ---
+
+```{r setup, include=F}
+knitr::opts_chunk$set(fig.align='center')
+```
+
+## Getting started
 
 The `epivizGvizConverter` package in R relies on the `epivizrStandalone` and `Gviz` packages available in Bioconductor. Its purpose is to reconstruct Epiviz workspaces created using the epivizr packages into plots formed by the Gviz package. In this vignette, we mimic the workspace created in the "Differentially Methylated Region Analysis" section from the `workshopBioc2016` and `bioc2016Addendum` packages. The data sets to be visualized include Gene Expression Barcode data, 450k Illumina Human Methylation data, and gene annotations to go along with them. 
 
 Gather necessary R and Bioconductor packages and data to create Epiviz workspace.
 
-```{r, eval=F, message=F}
+```{r, eval=F}
 # gather packages
 library(devtools)
 install_github("mlwalter4/epivizGvizConverter")
-library(epivizrStandalone)
+
+source("https://bioconductor.org/biocLite.R")
+biocLite(c("Homo.sapiens", "GenomicFeatures", "TxDb.Hsapiens.UCSC.hg19.knownGene"))
 library(Homo.sapiens)
 library(GenomicFeatures)
 library(TxDb.Hsapiens.UCSC.hg19.knownGene)
@@ -29,7 +37,11 @@ data(hypo_gr)
 data(cpg_gr)
 data(bcode_eset)
 data(cgi_gr)
+data(app)
+data(gviz_plot)
 ```
+
+## Setting up the Epiviz workspace
 
 Start the Epiviz application and create gene annotation, promoter, hypo- and hyper-differentially methylated regions, and percent methylation tracks.
 
@@ -37,9 +49,9 @@ For more assistance about how to create these types of workspaces, refer to the 
 
 * http://bioconductor.org/packages/devel/bioc/vignettes/epivizr/inst/doc/IntroToEpivizr.html
 
-```{r, eval=F, message=F}
+```{r, eval=F}
 # create standalone workspace
-app <- startStandalone(Homo.sapiens, keep_seqlevels=paste0("chr", c(10,11,20)), chr="chr11", port=7345)
+app <- startStandalone(Homo.sapiens, keep_seqlevels=paste0("chr", c(10,11,20)), chr="chr11", port=7339)
 
 # add cpg islands as BlocksTrack
 cgi_track <- app$plot(cgi_gr, datasource_name="CpG Islands")
@@ -70,28 +82,44 @@ By the end of the previous chunk of code, your Epiviz workspace should look like
 
 ![](images/epiviz_pic.PNG)
 
-The main function in this package is`epivizToGviz` that converts an existing Epiviz workspace into a Gviz plot. While an Epiviz workspace allows you to interact with the genomic data by zooming and scrolling, it may be advantageous to transfer it to a familiar static visualization, like a plot from the Gviz Bioconductor package. In order to convert it to Gviz, the EpivizApp object must be actively connected by running the code above so that the chromosome number and start and end locations can be gathered from the interactive workspace. Of course, the EpivizApp object can also be created from other datasets sent to Epiviz from R other than the ones used here.
+## Working from an Epiviz workspace to Gviz plot
+
+The main function in this package is`epivizToGviz` that converts an existing Epiviz workspace into a Gviz plot. While an Epiviz workspace allows you to interact with the genomic data by zooming and scrolling, it may be advantageous to transfer it to a familiar static visualization, like a set of plots from the Gviz Bioconductor package. In order to convert it to Gviz, the EpivizApp object must be actively connected by running the code above so that the chromosome number and start and end locations can be gathered from the interactive workspace. Of course, the EpivizApp object can also be created from other datasets sent to Epiviz from R other than the ones used here.
 
 After the EpivizApp object is created, the following line will turn it into a Gviz plot automatically. As mentioned previously, the app argument must be an object of type "EpivizApp" from the `epivizr` Bioconductor package. The function gathers information about the Epiviz workspace, including the current chromosome, start, and end location of the viewing pane in Epiviz. It also preserves the same vertical order in which the Epiviz workspace was made.
 
-```{r, eval=F, message=F}
-epivizToGviz(app)
+The function will return the list of tracks that were successfully turned into Gviz plots. It will also automatically plot the new tracks once they are converted, unless the "plot_tracks" option is changed to FALSE.
+
+```{r, eval=F}
+gviz_plot <- epivizToGviz(app)
 ```
 
 The Gviz plot should end up like this:
 
 ![](images/gviz_pic.PNG)
 
+If the default Gviz settings are undesireable, you can always change them and update the overall plot. Here's an example of how the color of one of the AnnotationTracks may be changed and how to add a HighlightTrack to a region of interest. Use `displayPars()` to see other flexible visualization options.
+
+```{r, eval=F}
+displayPars(gviz_plot[[4]]) <- list(fill="darkgreen")
+ht <- HighlightTrack(gviz_plot[3:9], start=85660000, end=85800000, genome="hg19", chromosome="chr11")
+plotTracks(c(gviz_plot[1:2],ht), from=85000000, to=86000000)
+```
+
+![](images/gviz_pic_color.PNG)
+
+## More on the `epivizToGviz` function
+
 There are separate functions within the `epivizToGviz` function that could be used separately to create tracks independently and only require granges objects as arguments. The table below describes each of their purposes.
 
-Function           | Epiviz Chart Object | Gviz Object                                     | Default Gviz Options
------------------- | ------------------- | ----------------------------------------------- | -----------------------------------
-convertBlocks      | BlocksTrack         | AnnotationTrack                                 | "dense" stacking and "box" shape 
-convertGenes       | GenesTrack          | IdeogramTrack, GenomeAxisTrack, GeneRegionTrack | "dense" stacking and "arrow" shape
-convertLine        | LineTrack           | DataTrack                                       | "smooth" plot type
-convertStackedLine | StackedLineTrack    | DataTrack                                       | "histogram" plot type
-convertHeatmap     | HeatmapPlot         | DataTrack                                       | "heatmap" plot type
-convertScatter     | ScatterPlot         | DataTrack                                       | "p" plot type
+Function                 | Epiviz Chart Object               | Gviz Track Object                                                       | Default Gviz Options
+------------------------ | --------------------------------- | ----------------------------------------------------------------------- | -----------------------------------
+convertEpivizBlocks      | BlocksTrack                       | AnnotationTrack                                                         | "dense" stacking and "box" shape 
+convertEpivizGenes       | GenesTrack                        | IdeogramTrack, GenomeAxisTrack, GeneRegionTrack, BiomartGeneRegionTrack | "dense" stacking and "arrow" shape
+convertEpivizLine        | LineTrack, LinePlot               | DataTrack                                                               | "smooth" plot type
+convertEpivizStackedLine | StackedLineTrack, StackedLinePlot | DataTrack                                                               | "histogram" plot type
+convertEpivizHeatmap     | HeatmapPlot                       | DataTrack                                                               | "heatmap" plot type
+convertEpivizScatter     | ScatterPlot                       | DataTrack                                                               | "p" plot type
 
 See the Gviz User Guide here for more detail about plot options:
 
@@ -101,22 +129,21 @@ The function also takes into account the optimal size for each track. For exampl
 
 If you only have an EpivizChart object instead of a complete EpivizApp object, or wanted to use different components from multiple Epiviz workspaces, you could use one of these other functions to convert between the two visualization systems. Here, the promoters track (used in original workspace) is used as an example. The chromosome argument must be filled in to tell Gviz where to plot the data. 
 
-```{r, eval=F, message=F}
+```{r, eval=F}
 class(promoters_track)
-prom_track <- convertBlocks(app=app, chart_obj=promoters_track, chr="chr11")
+prom_track <- convertEpivizBlocks(app=app, chart_obj=promoters_track, chr="chr11")
 plotTracks(c(GenomeAxisTrack(),prom_track), from=80000000, to=90000000)
 class(prom_track)
 ```
 
 ![](images/promoters_pic.PNG)
 
-Other chart types not used in the "Differentially Methylated Regions workspace" include ScatterPlots and StackedLineTracks. Here is an example of how a scatter plot is handled for the comparison of methylation data for breast tumor and normal breast samples.
+Other chart types not used in the "Differentially Methylated Regions" workspace include ScatterPlots and StackedLineTracks. Here is an example of how a scatter plot is handled for the comparison of methylation data for breast tumor and normal breast samples.
 
-```{r, eval=F, message=F}
+```{r, eval=F}
 bcode_scat <- app$plot(bcode_eset, datasource_name="Gene Expression Barcode", columns=c("breast:normal","breast:tumor"))
-scat_track <- convertScatter(app=app, chart_obj=bcode_scat, chr="chr11") 
+scat_track <- convertEpivizScatter(app=app, chart_obj=bcode_scat, chr="chr11") 
 plotTracks(c(GenomeAxisTrack(),scat_track), from=85000000, to=86000000)
-bcode_stac <- app$plot(bcode_eset, datasource_name="data", columns=c("breast:normal","breast:tumor"))
 ```
 
 ![](images/epiviz_scat.PNG)
@@ -125,12 +152,59 @@ bcode_stac <- app$plot(bcode_eset, datasource_name="data", columns=c("breast:nor
 
 StackedLineTracks and StackedLinePlots may also by converted to their Gviz counterparts.
 
-```{r, eval=F, message=F}
+```{r, eval=F}
 bcode_stac <- app$chart_mgr$visualize("StackedLineTrack", datasource=bcode_ms)
-stac_track <- convertStackedLine(app=app, chart_obj=bcode_stac, chr="chr11") 
+stac_track <- convertEpivizStackedLine(app=app, chart_obj=bcode_stac, chr="chr11") 
 plotTracks(c(GenomeAxisTrack(),stac_track), from=85000000, to=86000000)
 ```
 
 ![](images/epiviz_stac.PNG)
 
 ![](images/gviz_stac.PNG)
+
+Close the connection to the Epiviz session.
+
+```{r, eval=F}
+app$stop_app()
+```
+
+## Working from a Gviz plot to an Epiviz workspace
+
+This package also contains the `gvizToEpiviz` function which takes in a Gviz plot object that is list of Gviz track class objects (e.g. GeneRegionTrack, AnnotationTrack, DataTrack). The following will open a connection to a new Epiviz session and workspace on the same plotting range as the provided Gviz plot. Because `gvizToEpiviz` runs on `epivizrStandalone`, you must provide the "annotation" argument with an OrganismDB object if the genome of the GeneRegionTrack is not set to "hg19" for the human genome or if there is no GeneRegionTrack in the Gviz plot itself. You can also specify the chromosome and start and end location manually if you want to view a different range than the original plot.
+
+```{r, eval=F}
+app <- gvizToEpiviz(gviz_plot)
+```
+
+The workspace should end up looking like the one we began with in this vignette.
+
+![](images/converted_epiviz_pic.PNG)
+
+Once the Epiviz workspace is created, you can add other visualizations as you wish. The settings of the charts may also be altered. Here, we remove the LineTrack and replace it with a StackedLineTrack as an example, as well as change the color of the DMR tracks.
+
+```{r, eval=F}
+ls(envir=app$chart_mgr$.chart_list)
+app$chart_mgr$set_chart_settings("epivizChart_2", colors="#145a32")
+app$chart_mgr$rm_chart("epivizChart_6")
+displayPars(gviz_plot[[8]]) <- list(type="histogram")
+convertGvizData(app=app, track=gviz_plot[[8]])
+```
+
+![](images/epiviz_pic_color.PNG)
+
+## More on the `gvizToEpiviz` function
+
+There are three usable functions within `gvizToEpiviz`. They each convert an object that describes a Gviz track into their Epiviz chart matches.
+
+Function              | Gviz Track Object                         | Gviz Plot Type        | Epiviz Chart Object 
+--------------------- | ----------------------------------------- | --------------------- | ------------------- 
+convertGvizGeneRegion | GeneRegionTrack, BiomartGeneRegionTrack   |                       | GenesTrack
+convertGvizAnnotation | AnnotationTrack                           |                       | BlocksTrack
+convertGvizData       | DataTrack                                 | "heatmap", "gradient" | HeatmapPlot
+convertGvizData       | DataTrack                                 | "p"                   | ScatterPlot
+convertGvizData       | DataTrack                                 | "histogram"           | StackedLineTrack
+convertGvizData       | DataTrack                                 | all other plot        | LineTrack
+
+Because there are many options for the "type" option when plotting using Gviz, any plot type that is not listed in the chart above and tracks that contain a grouping of plot types will automatically be plotted as a LineTrack visualization in Epiviz.
+
+All of the Epiviz charts created through the `convertGvizData` function are also added as measurements to the workspace. This means you can add other interactive tracks and plots through using the "Visualizations" and "Computed Measurements" buttons. 
