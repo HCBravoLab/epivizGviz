@@ -7,7 +7,7 @@ convertGvizAnnotation <- function(app, track) {
     stop("'app' must be an 'EpivizApp' object")
   }
   if (!is(track, "AnnotationTrack")) {
-    stop(("'track' must be an 'AnnotationTrack' object"))
+    stop("'track' must be an 'AnnotationTrack' object")
   }
 
   # create epiviz chart

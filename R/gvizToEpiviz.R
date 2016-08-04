@@ -4,7 +4,7 @@ gvizToEpiviz <- function(gviz_plot, annotation=NULL, chr=NULL, start=NULL, end=N
 
   # check arguments
   if (!is(gviz_plot, "list")) {
-    stop(("'gviz_plot' must be a 'list' object"))
+    stop("'gviz_plot' must be a 'list' object")
   }
 
   # create epiviz workspace
@@ -15,7 +15,7 @@ gvizToEpiviz <- function(gviz_plot, annotation=NULL, chr=NULL, start=NULL, end=N
     }
   }
   if (is.null(app)) {
-    app <- startStandalone(annotation, chr=chr, start=start, end=end, port=7356)
+    ap <- startStandalone(annotation, chr=chr, start=start, end=end, port=7356)
   }
   for (track in gviz_plot) {
     if (class(track)=="AnnotationTrack") {

@@ -8,7 +8,7 @@ epivizToGviz <- function(app, plot_tracks=TRUE) {
   }
 
   # callback for location
-  if (app$is_server_closed) {
+  if (app$is_server_closed()) {
     stop("The server for 'app' is closed")
   }
   loc <- NULL

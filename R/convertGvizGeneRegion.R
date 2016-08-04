@@ -4,14 +4,14 @@ convertGvizGeneRegion <- function(track, annotation=NULL, chr=NULL, start=NULL, 
 
   # check arguments
   if (!is(track, "GeneRegionTrack")) {
-    stop(("'track' must be a 'GeneRegionTrack' object"))
+    stop("'track' must be a 'GeneRegionTrack' object")
   }
   if (track@genome=="hg19") {
     library(Homo.sapiens)
     annotation <- Homo.sapiens
   }
   if (is.null(annotation)) {
-    stop(("Must provide 'annotation' if genome is not 'hg19'"))
+    stop("Must provide 'annotation' if genome is not 'hg19'")
   }
 
   # create epiviz chart
