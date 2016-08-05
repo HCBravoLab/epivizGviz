@@ -1,13 +1,10 @@
-# save EpivizApp representation of a workspace into a ".RData" file
+# save EpivizApp representation of a workspace into a ".rda" file
 
 saveEpiviz <- function(app, file, stop_server=TRUE) {
 
   # check arguments
   if (!is(app, "EpivizApp")) {
     stop("'app' must be an 'EpivizApp' object")
-  }
-  if (!file.exists(file)) {
-    stop("File does not exist")
   }
 
   # save current location on the app
@@ -26,8 +23,9 @@ saveEpiviz <- function(app, file, stop_server=TRUE) {
   # save app to file
   save(app, file=file)
 
-  #close server so app can be restarted
+  #close server and stop the app so it can be restarted
   if (stop_server==TRUE) {
+    app$stop_app()
     app$server$stop_server()
   }
 }

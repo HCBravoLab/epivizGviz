@@ -15,7 +15,7 @@ gvizToEpiviz <- function(gviz_plot, annotation=NULL, chr=NULL, start=NULL, end=N
     }
   }
   if (is.null(app)) {
-    ap <- startStandalone(annotation, chr=chr, start=start, end=end, port=7356)
+    app <- startStandalone(annotation, chr=chr, start=start, end=end, port=7356)
   }
   for (track in gviz_plot) {
     if (class(track)=="AnnotationTrack") {
