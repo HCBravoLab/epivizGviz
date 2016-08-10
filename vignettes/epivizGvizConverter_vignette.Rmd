@@ -26,7 +26,7 @@ install_github("mlwalter4/epivizGvizConverter")
 library(epivizGvizConverter)
 ```
 
-```{r, eval=FALSE, message=FALSE, warning=FALSE}
+```{r, eval=TRUE, message=FALSE, warning=FALSE}
 # download other packages used in this vignette
 source("https://bioconductor.org/biocLite.R")
 biocLite(c("Homo.sapiens", "GenomicFeatures"))
@@ -92,7 +92,7 @@ The main function in this package is`epivizToGviz` that converts an existing Epi
 
 After the EpivizApp object is created, the following line will turn it into a Gviz plot automatically. As mentioned previously, the app argument must be an object of type "EpivizApp" from the `epivizr` Bioconductor package. The function gathers information about the Epiviz workspace, including the current chromosome, start, and end location of the viewing pane in Epiviz. It also preserves the same vertical order in which the Epiviz workspace was made.
 
-The function will return the list of tracks that were successfully turned into Gviz plots. It will also automatically plot the new tracks once they are converted, unless the "plot_tracks" option is changed to FALSE. The Epiviz app must be connected and available for `epivizToGviz`to work properly.
+The function will return the list of tracks that were successfully turned into Gviz plots. It will also automatically plot the new tracks once they are converted, unless the "plot_tracks" option is changed to FALSE. The Epiviz app must be connected to the web browser and available for `epivizToGviz`to work properly.
 
 ```{r, eval=TRUE}
 app
@@ -147,29 +147,29 @@ class(prom_track)
 
 Other chart types not used in the "Differentially Methylated Regions" workspace include ScatterPlots and StackedLineTracks. Here is an example of how a scatter plot is handled for the comparison of methylation data for breast tumor and normal breast samples.
 
+![](images/epiviz_scat.PNG)
+
 ```{r, eval=FALSE}
 bcode_scat <- app$plot(bcode_eset, datasource_name="Gene Expression Barcode", columns=c("breast:normal","breast:tumor"))
 scat_track <- convertEpivizScatter(app=app, chart_obj=bcode_scat, chr="chr11") 
 ```
 
-```{r, eval=TRUE, fig.height=7, fig.width=7.5}
+```{r, eval=TRUE, fig.height=3, fig.width=7}
 plotTracks(c(GenomeAxisTrack(),scat_track), from=85000000, to=86000000)
 ```
 
-![](images/epiviz_scat.PNG)
-
 StackedLineTracks and StackedLinePlots may also by converted to their Gviz counterparts.
+
+![](images/epiviz_stac.PNG)
 
 ```{r, eval=FALSE}
 bcode_stac <- app$chart_mgr$visualize("StackedLineTrack", datasource=bcode_ms)
 stac_track <- convertEpivizStackedLine(app=app, chart_obj=bcode_stac, chr="chr11") 
 ```
 
-```{r, eval=TRUE, fig.height=7, fig.width=7.5}
+```{r, eval=TRUE, fig.height=3, fig.width=7}
 plotTracks(c(GenomeAxisTrack(),stac_track), from=85000000, to=86000000)
 ```
-
-![](images/epiviz_stac.PNG)
 
 Close the connection to the Epiviz session.
 
@@ -237,7 +237,7 @@ The following code would be an alternative method for producing this same visual
 
 ```{r, eval=FALSE}
 data(cpgIslands)
-app <- startStandalone(Homo.sapiens, keep_seqlevels="chr7", chr="chr7", port=7222)
+app <- startStandalone(Homo.sapiens, keep_seqlevels="chr7", chr="chr7", try_ports=TRUE)
 app$navigate(chr="chr7", start=26500000, end=27100000)
 cpg_islands_track <- app$plot(cpgIslands, datasource_name="CpG Islands")
 ```
