@@ -1,5 +1,15 @@
-# converts Gviz DataTrack to Epiviz LineTrack
-
+#' Convert Gviz DataTrack to Epiviz LineTrack.
+#'
+#' @param app (EpivizApp) an object of class \code{\link[epivizr]{EpivizApp}}.
+#' @param track (DataTrack) an object of class \code{\link[Gviz]{DataTrack}}.
+#'
+#' @return An object of class \code{\link[epivizr]{EpivizChart}}
+#'
+#' @examples
+#' # see package vignette for example usage
+#' convertGvizData(app, track)
+#'
+#' @export
 convertGvizData <- function(app, track) {
 
   # check arguments
@@ -19,12 +29,16 @@ convertGvizData <- function(app, track) {
   rse_ms <- app$data_mgr$add_measurements(rse, name)
   if (displayPars(track)$type=="heatmap" || displayPars(track)$type=="gradient") {
     data_track <- app$chart_mgr$visualize("HeatmapPlot", datasource=rse_ms)
+    return(data_track)
   } else if (displayPars(track)$type=="p") {
     data_track <- app$chart_mgr$visualize("ScatterPlot", datasource=rse_ms)
+    return(data_track)
   } else if (displayPars(track)$type=="histogram") {
     data_track <- app$chart_mgr$visualize("StackedLineTrack", datasource=rse_ms)
+    return(data_track)
   } else {
     data_track <- app$chart_mgr$visualize("LineTrack", datasource=rse_ms)
     data_track$set(settings=list(step=1, interpolation="basis"))
+    return(data_track)
   }
 }

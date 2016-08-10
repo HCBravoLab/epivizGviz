@@ -1,5 +1,15 @@
-# convert an existing Epiviz workspace into a Gviz plot
-
+#' Convert an existing Epiviz workspace into a Gviz plot.
+#'
+#' @param app (EpivizApp) an object of class \code{\link[epivizr]{EpivizApp}}.
+#' @param plot_tracks (logical) plot all of the Gviz tracks together.
+#'
+#' @return A list of GdObjects that represent Gviz tracks, ex: \code{\link[Gviz]{GeneRegionTrack}}, \code{\link[Gviz]{AnnotationTrack}}, \code{\link[Gviz]{DataTrack}}
+#'
+#' @examples
+#' # see package vignette for example usage
+#' epivizToGviz(app, plot_tracks=TRUE)
+#'
+#' @export
 epivizToGviz <- function(app, plot_tracks=TRUE) {
 
   # check arguments
@@ -11,6 +21,7 @@ epivizToGviz <- function(app, plot_tracks=TRUE) {
   if (app$is_server_closed()) {
     stop("The server for 'app' is closed")
   }
+
   loc <- NULL
   app$get_current_location(function(response) {
     if (response$success) {

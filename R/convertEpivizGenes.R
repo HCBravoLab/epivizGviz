@@ -1,5 +1,16 @@
-# converts Epiviz GenesTrack to Gviz GeneRegionTrack
-
+#' Convert Epiviz GenesTrack to Gviz GeneRegionTrack.
+#'
+#' @param app (EpivizApp) an object of class \code{\link[epivizr]{EpivizApp}}.
+#' @param chart_obj (EpivizChart) an object of class \code{\link[epivizr]{EpivizChart}}.
+#' @param chr (character) the name of the chromosome to plot over, ex: "chr11".
+#'
+#' @return A list containing an object of class \code{\link[Gviz]{IdeogramTrack}}, \code{\link[Gviz]{GenomeAxisTrack}}, \code{\link[Gviz]{GeneRegionTrack}}
+#'
+#' @examples
+#' # see package vignette for example usage
+#' convertEpivizGenes(app, chart_obj, chr=NULL)
+#'
+#' @export
 convertEpivizGenes <- function(app, chart_obj, chr=NULL) {
 
   # check arguments
@@ -28,4 +39,5 @@ convertEpivizGenes <- function(app, chart_obj, chr=NULL) {
     gene_list[[length(gene_list)+1]] <- gene_track
   }
   gene_list <- unique(gene_list)
+  return(gene_list)
 }

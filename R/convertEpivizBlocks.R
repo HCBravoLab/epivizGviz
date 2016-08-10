@@ -1,5 +1,16 @@
-# converts Epiviz BlocksTrack to Gviz AnnotationTrack
-
+#' Convert Epiviz BlocksTrack to Gviz AnnotationTrack.
+#'
+#' @param app (EpivizApp) an object of class \code{\link[epivizr]{EpivizApp}}.
+#' @param chart_obj (EpivizChart) an object of class \code{\link[epivizr]{EpivizChart}}.
+#' @param chr (character) the name of the chromosome to plot over, ex: "chr11".
+#'
+#' @return A list containing an object of class \code{\link[Gviz]{AnnotationTrack}}
+#'
+#' @examples
+#' # see package vignette for example usage
+#' convertEpivizBlocks(app, chart_obj, chr)
+#'
+#' @export
 convertEpivizBlocks <- function(app, chart_obj, chr) {
 
   # check arguments
@@ -23,4 +34,5 @@ convertEpivizBlocks <- function(app, chart_obj, chr) {
     anno_list[[length(anno_list)+1]] <- AnnotationTrack(gr_chr, stacking="dense", shape="box", col=NULL, chromosome=chr, name=name, fontsize=12)
   }
   anno_list <- unique(anno_list)
+  return(anno_list)
 }

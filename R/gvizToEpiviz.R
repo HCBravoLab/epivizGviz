@@ -1,5 +1,18 @@
-# convert an existing Gviz plot into an Epiviz workspace
-
+#' Convert an existing Gviz plot into an Epiviz workspace.
+#'
+#' @param gviz_plot (list) a list representing a plot from \code{\link[Gviz]{plotTracks}}
+#' @param annotation (OrganismDb) an object of class \code{\link[OrganismDbi]{OrganismDb}}.
+#' @param chr (character) chromosome to browse to on app startup.
+#' @param start (integer) start location to browse to on app startup.
+#' @param end (integer) end location to browse to on app startup.
+#'
+#' @return An object of class \code{\link[epivizr]{EpivizApp}}
+#'
+#' @examples
+#' # see package vignette for example usage
+#' gvizToEpiviz(gviz_plot, annotation=NULL, chr=NULL, start=NULL, end=NULL)
+#'
+#' @export
 gvizToEpiviz <- function(gviz_plot, annotation=NULL, chr=NULL, start=NULL, end=NULL) {
 
   # check arguments
@@ -15,7 +28,7 @@ gvizToEpiviz <- function(gviz_plot, annotation=NULL, chr=NULL, start=NULL, end=N
     }
   }
   if (is.null(app)) {
-    app <- startStandalone(annotation, chr=chr, start=start, end=end, port=7356)
+    app <- startStandalone(annotation, chr=chr, start=start, end=end, try_ports=TRUE)
   }
   for (track in gviz_plot) {
     if (class(track)=="AnnotationTrack") {
