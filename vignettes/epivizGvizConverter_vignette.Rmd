@@ -9,7 +9,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, include=F}
+```{r setup, include=FALSE}
 knitr::opts_chunk$set(fig.align='center')
 ```
 
@@ -19,32 +19,26 @@ The `epivizGvizConverter` package in R relies on the `epivizrStandalone` and `Gv
 
 Gather necessary R and Bioconductor packages and data to create Epiviz workspace.
 
-```{r, eval=T, message=F, warning=F}
+```{r, eval=TRUE, message=FALSE, warning=FALSE}
 # gather packages
 library(devtools)
 install_github("mlwalter4/epivizGvizConverter")
 library(epivizGvizConverter)
 ```
 
-```{r, eval=F}
+```{r, eval=FALSE, message=FALSE, warning=FALSE}
 # download other packages used in this vignette
 source("https://bioconductor.org/biocLite.R")
-biocLite(c("Homo.sapiens", "GenomicFeatures", "TxDb.Hsapiens.UCSC.hg19.knownGene"))
+biocLite(c("Homo.sapiens", "GenomicFeatures"))
 library(Homo.sapiens)
 library(GenomicFeatures)
-library(TxDb.Hsapiens.UCSC.hg19.knownGene)
 ```
 
-```{r, eval=T, message=F}
+```{r, eval=TRUE, message=FALSE}
 # load datasets
-data(promoter_regions)
-data(hyper_gr)
-data(hypo_gr)
-data(cpg_gr)
-data(bcode_eset)
-data(cgi_gr)
-data(app)
-data(gviz_plot)
+data(promoter_regions, hyper_gr, hypo_gr, cpg_gr, bcode_eset, cgi_gr)
+data(app, gviz_plot)
+data(prom_track, scat_track, stac_track)
 ```
 
 ## Setting up the Epiviz workspace
@@ -55,9 +49,9 @@ For more assistance about how to create these types of workspaces, refer to the 
 
 * http://bioconductor.org/packages/devel/bioc/vignettes/epivizr/inst/doc/IntroToEpivizr.html
 
-```{r, eval=F}
-# create standalone workspac9
-app <- startStandalone(Homo.sapiens, keep_seqlevels=paste0("chr", c(10,11,20)), chr="chr11", port=7341)
+```{r, eval=FALSE}
+# create epiviz standalone workspace
+app <- startStandalone(Homo.sapiens, keep_seqlevels=paste0("chr", c(10,11,20)), chr="chr11", try_ports=TRUE)
 
 # add cpg islands as BlocksTrack
 cgi_track <- app$plot(cgi_gr, datasource_name="CpG Islands")
@@ -86,11 +80,11 @@ app$navigate(chr="chr11", start=85000000, end=86000000)
 
 By the end of the previous chunk of code and after printing the workspace to a pdf file, your Epiviz workspace should look like this:
 
-```{r, eval=F}
+```{r, eval=FALSE}
 app$print_workspace(file_name="workspace", file_type="pdf")
 ```
 
-![](images/epiviz_1470408736.png)
+![](images/workspace1.png)
 
 ## Working from an Epiviz workspace to Gviz plot
 
@@ -100,36 +94,25 @@ After the EpivizApp object is created, the following line will turn it into a Gv
 
 The function will return the list of tracks that were successfully turned into Gviz plots. It will also automatically plot the new tracks once they are converted, unless the "plot_tracks" option is changed to FALSE. The Epiviz app must be connected and available for `epivizToGviz`to work properly.
 
-The `saveEpiviz` function can be used to save a connected Epiviz workspace to a ".rda" file for later use.  The `restartEpiviz` function is then used to replot the Epiviz workspace from that ".rda" file.
-
-```{r, eval=F}
-saveEpiviz(app=app, file="data/app.rda")
-restartEpiviz(file="data/app.rda")
-```
-
-```{r, eval=T}
+```{r, eval=TRUE}
 app
 ```
 
 Convert to Gviz plot.
 
-```{r, eval=F}
+```{r, eval=FALSE}
 gviz_plot <- epivizToGviz(app)
 ```
-
-The Gviz plot should end up like this:
 
 ![](images/gviz_pic.PNG)
 
 If the default Gviz settings are undesireable, you can always change them and update the overall plot. Here's an example of how the color of one of the AnnotationTracks may be changed and how to add a HighlightTrack to a region of interest. Use `displayPars()` to see other flexible visualization options.
 
-```{r, eval=F}
+```{r, eval=TRUE, fig.height=7, fig.width=7.5}
 displayPars(gviz_plot[[4]]) <- list(fill="darkgreen")
 ht <- HighlightTrack(gviz_plot[3:9], start=85660000, end=85800000, genome="hg19", chromosome="chr11")
 plotTracks(c(gviz_plot[1:2],ht), from=85000000, to=86000000)
 ```
-
-![](images/gviz_pic_color.PNG)
 
 ## More on the `epivizToGviz` function
 
@@ -152,42 +135,45 @@ The function also takes into account the optimal size for each track. For exampl
 
 If you only have an EpivizChart object instead of a complete EpivizApp object, or wanted to use different components from multiple Epiviz workspaces, you could use one of these other functions to convert between the two visualization systems. Here, the promoters track (used in original workspace) is used as an example. The chromosome argument must be filled in to tell Gviz where to plot the data. 
 
-```{r, eval=F}
+```{r, eval=FALSE}
 class(promoters_track)
 prom_track <- convertEpivizBlocks(app=app, chart_obj=promoters_track, chr="chr11")
+```
+
+```{r, eval=TRUE, fig.height=3, fig.width=7}
 plotTracks(c(GenomeAxisTrack(),prom_track), from=80000000, to=90000000)
 class(prom_track)
 ```
 
-![](images/promoters_pic.PNG)
-
 Other chart types not used in the "Differentially Methylated Regions" workspace include ScatterPlots and StackedLineTracks. Here is an example of how a scatter plot is handled for the comparison of methylation data for breast tumor and normal breast samples.
 
-```{r, eval=F}
+```{r, eval=FALSE}
 bcode_scat <- app$plot(bcode_eset, datasource_name="Gene Expression Barcode", columns=c("breast:normal","breast:tumor"))
 scat_track <- convertEpivizScatter(app=app, chart_obj=bcode_scat, chr="chr11") 
+```
+
+```{r, eval=TRUE, fig.height=7, fig.width=7.5}
 plotTracks(c(GenomeAxisTrack(),scat_track), from=85000000, to=86000000)
 ```
 
 ![](images/epiviz_scat.PNG)
 
-![](images/gviz_scat.PNG)
-
 StackedLineTracks and StackedLinePlots may also by converted to their Gviz counterparts.
 
-```{r, eval=F}
+```{r, eval=FALSE}
 bcode_stac <- app$chart_mgr$visualize("StackedLineTrack", datasource=bcode_ms)
 stac_track <- convertEpivizStackedLine(app=app, chart_obj=bcode_stac, chr="chr11") 
+```
+
+```{r, eval=TRUE, fig.height=7, fig.width=7.5}
 plotTracks(c(GenomeAxisTrack(),stac_track), from=85000000, to=86000000)
 ```
 
 ![](images/epiviz_stac.PNG)
 
-![](images/gviz_stac.PNG)
-
 Close the connection to the Epiviz session.
 
-```{r, eval=F}
+```{r, eval=FALSE}
 app$stop_app()
 ```
 
@@ -195,34 +181,70 @@ app$stop_app()
 
 This package also contains the `gvizToEpiviz` function which takes in a Gviz plot object that is list of Gviz track class objects (e.g. GeneRegionTrack, AnnotationTrack, DataTrack). The following will open a connection to a new Epiviz session and workspace on the same plotting range as the provided Gviz plot. Because `gvizToEpiviz` runs on `epivizrStandalone`, you must provide the "annotation" argument with an OrganismDB object if the genome of the GeneRegionTrack is not set to "hg19" for the human genome or if there is no GeneRegionTrack in the Gviz plot itself. You can also specify the chromosome and start and end location manually if you want to view a different range than the original plot.
 
-```{r, eval=T}
+```{r, eval=TRUE}
 gviz_plot
 ```
 
 Convert to Epiviz workspace.
 
-```{r, eval=F}
-app <- gvizToEpiviz(gviz_plot)
+```{r, eval=FALSE}
+app <- gvizToEpiviz(gviz_plot, start=85000000, end=86000000)
 ```
 
 The workspace should end up looking like the one we began with in this vignette.
 
-![](images/converted_epiviz_pic.PNG)
+![](images/workspace2.png)
 
 Once the Epiviz workspace is created, you can add other visualizations as you wish. The settings of the charts may also be altered. Here, we remove the LineTrack and replace it with a StackedLineTrack as an example, as well as change the color of the CpG island track.
 
-```{r, eval=T}
+```{r, eval=TRUE}
 ls(envir=app$chart_mgr$.chart_list)
 ```
 
-```{r, eval=F}
+```{r, eval=FALSE}
 app$chart_mgr$set_chart_settings("epivizChart_2", colors="#145a32")
 app$chart_mgr$rm_chart("epivizChart_6")
 displayPars(gviz_plot[[8]]) <- list(type="histogram")
 convertGvizData(app=app, track=gviz_plot[[8]])
 ```
 
-![](images/epiviz_pic_color.PNG)
+![](images/workspace3.png)
+
+## Example from `The Gviz User Guide`
+
+The `epivizGvizConverter` package can also serve as another interface to setup Epiviz workspaces along with `epivizr`.  Here is an example of how to do so based on an example from the `Gviz` user guide on page 5.
+
+```{r, eval=TRUE, fig.height=2.7, fig.width=7}
+library(Gviz)
+library(GenomicRanges)
+data(cpgIslands)
+class(cpgIslands)
+chr <- as.character(unique(seqnames(cpgIslands)))
+gen <- genome(cpgIslands)
+atrack <- AnnotationTrack(cpgIslands, name = "CpG")
+gtrack <- GenomeAxisTrack()
+itrack <- IdeogramTrack(genome = gen, chromosome = chr)
+data(geneModels)
+grtrack <- GeneRegionTrack(geneModels, genome = gen, chromosome = chr, name = "Gene Model")
+plot <- plotTracks(list(itrack, gtrack, atrack, grtrack))
+```
+
+```{r, eval=FALSE}
+app <- gvizToEpiviz(plot)
+```
+
+The following code would be an alternative method for producing this same visualization in Epiviz, however using the `epivizr` package functions instead of those found in this `epivizGvizConverter` package. Both versions give you the same result in Epiviz.
+
+```{r, eval=FALSE}
+data(cpgIslands)
+app <- startStandalone(Homo.sapiens, keep_seqlevels="chr7", chr="chr7", port=7222)
+app$navigate(chr="chr7", start=26500000, end=27100000)
+cpg_islands_track <- app$plot(cpgIslands, datasource_name="CpG Islands")
+```
+
+The Epiviz workspace:
+
+![](images/epiviz_gvizguide.PNG)
 
 ## More on the `gvizToEpiviz` function
 
@@ -240,3 +262,9 @@ convertGvizData       | DataTrack                                 | all other pl
 Because there are many options for the "type" option when plotting using Gviz, any plot type that is not listed in the chart above and tracks that contain a grouping of plot types will automatically be plotted as a LineTrack visualization in Epiviz.
 
 All of the Epiviz charts created through the `convertGvizData` function are also added as measurements to the workspace. This means you can add other interactive tracks and plots through using the "Visualizations" and "Computed Measurements" buttons. 
+
+## SessionInfo
+
+```{r session-info, cache=FALSE}
+sessionInfo()
+```
