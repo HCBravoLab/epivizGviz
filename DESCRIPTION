@@ -13,5 +13,5 @@ License: Artistic-2.0
 LazyData: TRUE
 biocViews: Visualization
 Depends: epivizrStandalone, Gviz, SummarizedExperiment
-Suggests: Homo.sapiens, GenomicFeatures
+Suggests: Homo.sapiens, GenomicFeatures, BiocStyle
 RoxygenNote: 5.0.1

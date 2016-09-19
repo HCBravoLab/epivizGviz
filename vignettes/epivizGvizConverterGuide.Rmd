@@ -1,8 +1,8 @@
 ---
 title: "The `epivizGvizConverter` User Guide"
-author: "Morgan Walter"
+author: "Morgan Walter and Héctor Corrada Bravo"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: BiocStyle::html_document
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{The `epivizGvizConverter` User Guide}
@@ -15,21 +15,18 @@ knitr::opts_chunk$set(fig.align='center')
 
 ## Getting started
 
-The `epivizGvizConverter` package in R relies on the `epivizrStandalone` and `Gviz` packages available in Bioconductor. Its purpose is to reconstruct Epiviz workspaces created using the epivizr packages into plots formed by the Gviz package. In this vignette, we mimic the workspace created in the "Differentially Methylated Region Analysis" section from the `workshopBioc2016` and `bioc2016Addendum` packages. The data sets to be visualized include Gene Expression Barcode data, 450k Illumina Human Methylation data, and gene annotations to go along with them. 
+The `epivizGvizConverter` package in R relies on the `epivizrStandalone` and `Gviz` packages available in Bioconductor. Its purpose is to reconstruct Epiviz workspaces created using the epivizr packages into plots formed by the Gviz package. In this vignette, we recreate a workspace for analysis of DNA methylation data. The data sets to be visualized include Gene Expression Barcode data, 450k Illumina Human Methylation data, and gene annotations to go along with them. 
 
 Gather necessary R and Bioconductor packages and data to create Epiviz workspace.
 
 ```{r, eval=TRUE, message=FALSE, warning=FALSE}
 # gather packages
 library(devtools)
-install_github("mlwalter4/epivizGvizConverter")
 library(epivizGvizConverter)
 ```
 
 ```{r, eval=TRUE, message=FALSE, warning=FALSE}
 # download other packages used in this vignette
-source("https://bioconductor.org/biocLite.R")
-biocLite(c("Homo.sapiens", "GenomicFeatures"))
 library(Homo.sapiens)
 library(GenomicFeatures)
 ```
@@ -198,7 +195,8 @@ The workspace should end up looking like the one we began with in this vignette.
 Once the Epiviz workspace is created, you can add other visualizations as you wish. The settings of the charts may also be altered. Here, we remove the LineTrack and replace it with a StackedLineTrack as an example, as well as change the color of the CpG island track.
 
 ```{r, eval=TRUE}
-ls(envir=app$chart_mgr$.chart_list)
+#ls(envir=app$chart_mgr$.chart_list)
+app$chart_mgr$list_charts()
 ```
 
 ```{r, eval=FALSE}
