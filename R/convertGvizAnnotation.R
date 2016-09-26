@@ -7,8 +7,12 @@
 #'
 #' @examples
 #' # see package vignette for example usage
+#' \dontrun{
 #' convertGvizAnnotation(app, track)
-#'
+#' }
+#' 
+#' @import methods
+#' @import Gviz
 #' @export
 convertGvizAnnotation <- function(app, track) {
 

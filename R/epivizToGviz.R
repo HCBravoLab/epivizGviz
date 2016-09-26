@@ -7,8 +7,11 @@
 #'
 #' @examples
 #' # see package vignette for example usage
+#' \dontrun{
 #' epivizToGviz(app, plot_tracks=TRUE)
+#' }
 #'
+#' @import Gviz
 #' @export
 epivizToGviz <- function(app, plot_tracks=TRUE) {
 

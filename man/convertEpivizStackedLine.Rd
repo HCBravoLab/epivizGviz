@@ -21,7 +21,9 @@ Convert Epiviz StackedLineTrack to Gviz DataTrack.
 }
 \examples{
 # see package vignette for example usage
+\dontrun{
 convertEpivizStackedLine(app, chart_obj, chr)
+}
 
 }
 

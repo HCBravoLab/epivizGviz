@@ -19,7 +19,9 @@ Convert an existing Epiviz workspace into a Gviz plot.
 }
 \examples{
 # see package vignette for example usage
+\dontrun{
 epivizToGviz(app, plot_tracks=TRUE)
+}
 
 }
 

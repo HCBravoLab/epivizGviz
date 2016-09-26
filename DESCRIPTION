@@ -1,17 +1,17 @@
-Package: epivizGvizConverter
+Package: epivizGviz
 Type: Package
-Title: epivizGvizConverter R Package
+Title: Convert epivizr workspaces to GViz plots, and viceversa
 Version: 0.99.0
 Date: 2016-08-10
 Authors@R: c(
     person("Morgan", "Walter", email="mlwalter@terpmail.umd.edu", role= c("aut")),
     person("Hector", "Corrada Bravo", email = "hcorrada@gmail.com", role = c("aut", "cre")))
 Description: Convert between interactive Epiviz workspaces and static Gviz plots for genomic visualization
-    them into Gviz plots and vice versa.
+    vice versa.
 VignetteBuilder: knitr
 License: Artistic-2.0
 LazyData: TRUE
 biocViews: Visualization
-Depends: epivizrStandalone, Gviz, SummarizedExperiment
-Suggests: Homo.sapiens, GenomicFeatures, BiocStyle
+Depends: R (>= 3.2.3), methods, epivizrStandalone, Gviz, SummarizedExperiment
+Suggests: Homo.sapiens, GenomicFeatures, knitr, BiocStyle
 RoxygenNote: 5.0.1

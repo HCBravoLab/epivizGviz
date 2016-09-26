@@ -8,8 +8,11 @@
 #'
 #' @examples
 #' # see package vignette for example usage
+#' \dontrun{
 #' convertEpivizGenes(app, chart_obj, chr=NULL)
-#'
+#' }
+#' 
+#' @import Gviz
 #' @export
 convertEpivizGenes <- function(app, chart_obj, chr=NULL) {
 
@@ -27,7 +30,7 @@ convertEpivizGenes <- function(app, chart_obj, chr=NULL) {
   # create gviz track
   measurements <- chart_obj$.measurements
   for (ms in measurements) {
-    gr <- GRanges(app$data_mgr$.find_datasource(ms@datasourceId)$.object)
+    gr <- GenomicRanges::GRanges(app$data_mgr$.find_datasource(ms@datasourceId)$.object)
     gr_chr <- gr[which(seqnames(gr)==chr),]
     name <- ms@datasourceId
     gene_track <- GeneRegionTrack(gr_chr, collapseTranscripts=TRUE, stacking="dense", shape="arrow", chromosome=chr, name=name, fontsize=12)

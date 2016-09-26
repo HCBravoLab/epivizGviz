@@ -8,8 +8,13 @@
 #'
 #' @examples
 #' # see package vignette for example usage
+#' \dontrun{
 #' convertEpivizStackedLine(app, chart_obj, chr)
-#'
+#' }
+#' 
+#' @import methods
+#' @import SummarizedExperiment
+#' @import Gviz
 #' @export
 convertEpivizStackedLine <- function(app, chart_obj, chr) {
 
@@ -28,7 +33,7 @@ convertEpivizStackedLine <- function(app, chart_obj, chr) {
   measurements <- chart_obj$.measurements
   ms_obj <- app$get_ms_object(chart_obj)$.object
   mcols(rowRanges(ms_obj)) <- assay(ms_obj)
-  gr <- GRanges(rowRanges(ms_obj), strand="*")
+  gr <- GenomicRanges::GRanges(rowRanges(ms_obj), strand="*")
   gr_chr <- gr[which(seqnames(gr)==chr),]
   for (ms in measurements) {
     name <- ms@datasourceId

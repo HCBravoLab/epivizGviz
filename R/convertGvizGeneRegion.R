@@ -10,8 +10,12 @@
 #'
 #' @examples
 #' # see package vignette for example usage
+#' \dontrun{
 #' convertGvizGeneRegion(track, annotation=NULL, chr=NULL, start=NULL, end=NULL)
-#'
+#' }
+#' 
+#' @import methods
+#' @import epivizrStandalone
 #' @export
 convertGvizGeneRegion <- function(track, annotation=NULL, chr=NULL, start=NULL, end=NULL) {
 
@@ -20,8 +24,11 @@ convertGvizGeneRegion <- function(track, annotation=NULL, chr=NULL, start=NULL, 
     stop("'track' must be a 'GeneRegionTrack' object")
   }
   if (track@genome=="hg19") {
-    library(Homo.sapiens)
-    annotation <- Homo.sapiens
+    if(requireNamespace("Homo.sapiens")) {
+      annotation <- Home.sapiens::Homo.sapiens
+    } else {
+      stop("genome is 'hg19' but 'Homo.sapiens' package is not installed.")
+    }
   }
   if (is.null(annotation)) {
     stop("Must provide 'annotation' if genome is not 'hg19'")

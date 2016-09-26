@@ -1,5 +1,5 @@
 ---
-title: "The `epivizGvizConverter` User Guide"
+title: "The `epivizGviz` User Guide"
 author: "Morgan Walter and Héctor Corrada Bravo"
 date: "`r Sys.Date()`"
 output: BiocStyle::html_document
@@ -20,15 +20,7 @@ The `epivizGvizConverter` package in R relies on the `epivizrStandalone` and `Gv
 Gather necessary R and Bioconductor packages and data to create Epiviz workspace.
 
 ```{r, eval=TRUE, message=FALSE, warning=FALSE}
-# gather packages
-library(devtools)
-library(epivizGvizConverter)
-```
-
-```{r, eval=TRUE, message=FALSE, warning=FALSE}
-# download other packages used in this vignette
-library(Homo.sapiens)
-library(GenomicFeatures)
+library(epivizGviz)
 ```
 
 ```{r, eval=TRUE, message=FALSE}

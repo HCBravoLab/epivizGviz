@@ -21,7 +21,9 @@ Convert Epiviz GenesTrack to Gviz GeneRegionTrack.
 }
 \examples{
 # see package vignette for example usage
+\dontrun{
 convertEpivizGenes(app, chart_obj, chr=NULL)
+}
 
 }
 

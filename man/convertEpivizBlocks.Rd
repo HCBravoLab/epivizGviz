@@ -20,8 +20,10 @@ A list containing an object of class \code{\link[Gviz]{AnnotationTrack}}
 Convert Epiviz BlocksTrack to Gviz AnnotationTrack.
 }
 \examples{
+\dontrun{
 # see package vignette for example usage
 convertEpivizBlocks(app, chart_obj, chr)
+}
 
 }
 

@@ -19,7 +19,9 @@ Convert Gviz AnnotationTrack to Epiviz BlocksTrack.
 }
 \examples{
 # see package vignette for example usage
+\dontrun{
 convertGvizAnnotation(app, track)
+}
 
 }
 

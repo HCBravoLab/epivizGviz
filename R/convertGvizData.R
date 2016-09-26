@@ -7,8 +7,12 @@
 #'
 #' @examples
 #' # see package vignette for example usage
+#' \dontrun{
 #' convertGvizData(app, track)
-#'
+#' }
+#' 
+#' @import methods
+#' @import SummarizedExperiment
 #' @export
 convertGvizData <- function(app, track) {
 

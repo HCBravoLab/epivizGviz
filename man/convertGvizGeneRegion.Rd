@@ -26,7 +26,9 @@ Convert Gviz GeneRegionTrack to Epiviz GenesTrack.
 }
 \examples{
 # see package vignette for example usage
+\dontrun{
 convertGvizGeneRegion(track, annotation=NULL, chr=NULL, start=NULL, end=NULL)
+}
 
 }
 

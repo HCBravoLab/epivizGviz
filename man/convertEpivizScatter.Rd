@@ -21,7 +21,9 @@ Convert Epiviz ScatterPlot to Gviz DataTrack.
 }
 \examples{
 # see package vignette for example usage
+\dontrun{
 convertEpivizScatter(app, chart_obj, chr)
+}
 
 }
 

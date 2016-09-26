@@ -21,7 +21,9 @@ Convert Epiviz HeatmapPlot to Gviz DataTrack.
 }
 \examples{
 # see package vignette for example usage
+\dontrun{
 convertEpivizHeatmap(app, chart_obj, chr)
+}
 
 }
 

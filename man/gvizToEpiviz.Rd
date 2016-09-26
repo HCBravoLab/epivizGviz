@@ -26,7 +26,9 @@ Convert an existing Gviz plot into an Epiviz workspace.
 }
 \examples{
 # see package vignette for example usage
+\dontrun{
 gvizToEpiviz(gviz_plot, annotation=NULL, chr=NULL, start=NULL, end=NULL)
+}
 
 }
 

@@ -8,8 +8,12 @@
 #'
 #' @examples
 #' # see package vignette for example usage
+#' \dontrun{
 #' convertEpivizLine(app, chart_obj, chr)
-#'
+#' }
+#' 
+#' @import methods
+#' @import Gviz
 #' @export
 convertEpivizLine <- function(app, chart_obj, chr) {
 
@@ -27,7 +31,7 @@ convertEpivizLine <- function(app, chart_obj, chr) {
   # create gviz track
   measurements <- chart_obj$.measurements
   for (ms in measurements) {
-    gr <- GRanges(app$data_mgr$.find_datasource(ms@datasourceId)$.object)
+    gr <- GenomicRanges::GRanges(app$data_mgr$.find_datasource(ms@datasourceId)$.object)
     gr_chr <- gr[which(seqnames(gr)==chr),]
     name <- ms@datasourceId
     if (!exists("line_list")) {line_list <- list()}

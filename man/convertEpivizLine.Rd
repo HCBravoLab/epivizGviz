@@ -21,7 +21,9 @@ Convert Epiviz LineTrack to Gviz DataTrack.
 }
 \examples{
 # see package vignette for example usage
+\dontrun{
 convertEpivizLine(app, chart_obj, chr)
+}
 
 }
 
